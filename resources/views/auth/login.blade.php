@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <title>Login - TVET E-Portfolio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
+        * { box-sizing: border-box; }
+        html, body { max-width: 100%; overflow-x: hidden; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: #1B3A4B;
             min-height: 100vh;
             display: flex;
             align-items: center;
+            padding: 1rem;
         }
         .login-card {
             background: #fff;
             border-radius: 12px;
-            padding: 2.5rem;
+            padding: 2.25rem 1.75rem;
             max-width: 420px;
             margin: auto;
             width: 100%;
@@ -25,6 +28,9 @@
         .btn-teal { background: #2E7D6B; border-color: #2E7D6B; color: #fff; }
         .btn-teal:hover { background: #256b5c; color: #fff; }
         .demo-box { background: #E8F3F0; border-radius: 8px; padding: .85rem 1rem; font-size: .85rem; }
+        @media (max-width: 400px) {
+            .login-card { padding: 1.75rem 1.25rem; }
+        }
     </style>
 </head>
 <body>
@@ -59,7 +65,7 @@
     <div class="demo-box mt-4">
         <strong>Demo logins</strong> (password: <code>password</code>)<br>
         Admin: admin@tvet.test<br>
-        Instructor: instructor1@tvet.test<br>
+        Engineering HOD: instructor1@tvet.test<br>
         Student: student1@tvet.test
     </div>
 </div>

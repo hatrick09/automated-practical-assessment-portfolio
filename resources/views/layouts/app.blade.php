@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <title>@yield('title', 'Dashboard') - TVET E-Portfolio</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,10 +15,51 @@
             --bg: #F7F9F8;
             --border: #DCE3E1;
         }
+        * { box-sizing: border-box; }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
         }
+
+        /* ---------- Top bar (mobile only) ---------- */
+        .mobile-topbar {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+            background: var(--navy);
+            color: #fff;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+        }
+        .mobile-topbar .brand-mini {
+            font-weight: 700;
+            font-size: 1rem;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .menu-toggle-btn {
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ---------- Sidebar ---------- */
         .sidebar {
             background: var(--navy);
             min-height: 100vh;
@@ -26,8 +67,9 @@
             position: fixed;
             top: 0; left: 0; bottom: 0;
             padding: 1.25rem 0.75rem;
-            z-index: 1030;
+            z-index: 1050;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .sidebar .brand {
             color: #fff;
@@ -54,19 +96,55 @@
             letter-spacing: .06em;
             padding: 1rem 0.85rem 0.35rem;
         }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1045;
+        }
+
         .main-content {
             margin-left: 240px;
             padding: 1.75rem 2rem;
+            min-width: 0; /* prevents flex/grid children forcing overflow */
         }
-        @media (max-width: 767.98px) {
-            .sidebar { position: static; width: 100%; min-height: auto; }
-            .main-content { margin-left: 0; padding: 1.25rem; }
+
+        /* ---------- Mobile layout ---------- */
+        @media (max-width: 991.98px) {
+            .mobile-topbar { display: flex; }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.22s ease;
+                width: 82%;
+                max-width: 300px;
+                box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+            }
+            .sidebar.is-open { transform: translateX(0); }
+            .sidebar-backdrop.is-open { display: block; }
+            .main-content {
+                margin-left: 0;
+                padding: 1.1rem 0.9rem;
+            }
         }
+
+        @media (max-width: 575.98px) {
+            .main-content { padding: 0.9rem 0.75rem; }
+            .section-title, h1.section-title { font-size: 18px !important; }
+            .stat-counter { font-size: 1.25rem !important; }
+            .card-tvet { padding: 1rem !important; }
+            .avatar-circle { width: 48px !important; height: 48px !important; font-size: 1rem !important; }
+            table { font-size: 0.85rem; }
+            .btn { font-size: 0.85rem; }
+        }
+
         .card-tvet {
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 1.25rem;
+            max-width: 100%;
         }
         h1, h2, h3, .section-title {
             font-weight: 700;
@@ -78,6 +156,7 @@
             font-weight: 600;
             border-radius: 6px;
             padding: 0.35em 0.65em;
+            white-space: nowrap;
         }
         .btn-teal {
             background: var(--teal);
@@ -91,6 +170,7 @@
         }
         .btn-outline-teal:hover { background: var(--teal); color: #fff; }
         .table-tvet thead { background: var(--teal-light); }
+        .table-responsive { -webkit-overflow-scrolling: touch; }
         .stat-counter { font-size: 1.6rem; font-weight: 700; color: var(--navy); }
         .progress { background: var(--border); border-radius: 6px; height: 8px; }
         .progress-bar { background: var(--teal); }
@@ -102,19 +182,33 @@
             border-radius: 20px;
             padding: 0.25em 0.75em;
             display: inline-block;
+            white-space: nowrap;
         }
         .avatar-circle {
             width: 56px; height: 56px; border-radius: 50%;
             background: var(--teal); color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 1.2rem;
+            flex-shrink: 0;
         }
+        /* Prevent wide tables/forms from blowing out the page width on phones */
+        img, table { max-width: 100%; }
+        .row { --bs-gutter-x: 1rem; }
     </style>
     @stack('styles')
 </head>
 <body>
+<div class="mobile-topbar">
+    <button class="menu-toggle-btn" type="button" onclick="tvetToggleSidebar(true)" aria-label="Open menu">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="brand-mini"><i class="bi bi-mortarboard-fill me-2"></i>TVET E-Portfolio</div>
+</div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="tvetToggleSidebar(false)"></div>
+
 <div class="d-flex">
-    <nav class="sidebar">
+    <nav class="sidebar" id="tvetSidebar">
         <div class="brand"><i class="bi bi-mortarboard-fill me-2"></i>TVET E-Portfolio</div>
         <ul class="nav flex-column">
             @auth
@@ -185,6 +279,25 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function tvetToggleSidebar(open) {
+        const sidebar = document.getElementById('tvetSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        sidebar.classList.toggle('is-open', open);
+        backdrop.classList.toggle('is-open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    }
+    // Close the mobile menu automatically after tapping a nav link.
+    document.querySelectorAll('#tvetSidebar .nav-link').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (window.innerWidth <= 991.98) tvetToggleSidebar(false);
+        });
+    });
+    // If the viewport is resized up to desktop width, make sure mobile state is cleared.
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 991.98) tvetToggleSidebar(false);
+    });
+</script>
 @stack('scripts')
 </body>
 </html>
