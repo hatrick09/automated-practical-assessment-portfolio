@@ -139,6 +139,44 @@
             .btn { font-size: 0.85rem; }
         }
 
+        /* ---------- Mobile: bigger, more legible form controls ---------- */
+        /* Bootstrap's "-sm" inputs (used throughout inline edit rows and the
+           scoring form) are fine on a desktop but too small to read/tap on a
+           phone. Force every input/select back up to a comfortable, tappable
+           size on mobile, and use 16px+ font so iOS Safari doesn't auto-zoom
+           the page when a field is focused (that auto-zoom is also why some
+           content, like an Approve button, could seem to "disappear" after
+           tapping a nearby field). */
+        @media (max-width: 767.98px) {
+            .form-control, .form-select,
+            .form-control-sm, .form-select-sm,
+            select.form-select-sm, input.form-control-sm {
+                font-size: 16px !important;
+                padding: 0.55rem 0.7rem !important;
+                min-height: 44px !important;
+            }
+            textarea.form-control { min-height: 90px !important; }
+            .form-check-input { width: 1.25em; height: 1.25em; }
+            .btn { min-height: 42px; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+            .btn-sm { min-height: 38px; }
+        }
+
+        /* ---------- Mobile: keep the last table column (usually the action
+           button, e.g. "Approve", "Save", "Delete") permanently visible on
+           the right edge of a horizontally-scrolling table, instead of it
+           being scrolled out of view with no visual hint it's there. ---------- */
+        @media (max-width: 767.98px) {
+            .table-responsive { position: relative; }
+            .table-tvet td:last-child, .table-tvet th:last-child {
+                position: sticky;
+                right: 0;
+                background: #fff;
+                box-shadow: -8px 0 8px -6px rgba(0,0,0,0.18);
+                white-space: nowrap;
+            }
+            .table-tvet thead th:last-child { background: var(--teal-light); }
+        }
+
         .card-tvet {
             background: #fff;
             border: 1px solid var(--border);
